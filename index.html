@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .dark body {
+             background-color: #1a202c;
+        }
+        .main-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .dark .main-container {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #qrcode canvas, #qrcode img {
+            margin: 0 auto;
+            border-radius: 0.75rem; /* Increased rounding */
+            border: 4px solid white; /* Added a white border */
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .dark #qrcode canvas, .dark #qrcode img {
+            border-color: #374151; /* Darker border for dark mode */
+        }
+        .btn-gradient {
+            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
+        }
+        .btn-gradient:hover {
+            background-image: linear-gradient(to right, #4338ca, #6d28d9);
+        }
+        /* Custom styles for file input button */
+        input[type="file"]::file-selector-button {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background-color: #eef2ff;
+            color: #4338ca;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-color: #e0e7ff;
+        }
+        .dark input[type="file"]::file-selector-button {
+             background-color: rgba(79, 70, 229, 0.2);
+             color: #a5b4fc;
+        }
+        .dark input[type="file"]::file-selector-button:hover {
+             background-color: rgba(79, 70, 229, 0.3);
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen p-4 transition-colors duration-300">
+    <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-8 text-center main-container">
+        <!-- App Icon and Title -->
+        <div class="flex flex-col items-center mb-6">
+            <div class="bg-indigo-100 dark:bg-indigo-900/50 p-3 rounded-full mb-4">
+                <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h6v6H4V4zm8 0h6v6h-6V4zM4 14h6v6H4v-6zm8 5h2v-2h2v-2h-2v-2h-2v2h-2v2h2v2zm2-7h2v-2h-2v2zm4-4h2V4h-2v2z"/></svg>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white">QR Code Generator</h1>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">Instantly create and download your QR code.</p>
+        </div>
+
+        <!-- URL Input -->
+        <div class="relative mb-4">
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            <input type="text" id="url-input" value="https://lays.gg" class="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
+        </div>
+
+        <!-- Customization Options -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-left">
+            <div>
+                <label for="fg-color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dot Color</label>
+                <input type="color" id="fg-color" value="#000000" class="w-full h-10 p-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer">
+            </div>
+            <div>
+                <label for="bg-color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Background Color</label>
+                <input type="color" id="bg-color" value="#ffffff" class="w-full h-10 p-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer">
+            </div>
+             <div class="sm:col-span-2">
+                <label for="dot-style" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Style</label>
+                <select id="dot-style" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="square">Square</option>
+                    <option value="dots">Dots</option>
+                    <option value="rounded">Rounded</option>
+                    <option value="extra-rounded">Extra Rounded</option>
+                    <option value="classy">Classy</option>
+                    <option value="classy-rounded">Classy Rounded</option>
+                </select>
+            </div>
+            <div class="sm:col-span-2">
+                 <label for="logo-upload" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Logo (optional)</label>
+                 <input type="file" id="logo-upload" accept="image/png, image/jpeg, image/svg+xml" class="w-full text-sm text-gray-500 dark:text-gray-400">
+            </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button id="generate-btn" class="w-full flex items-center justify-center gap-2 btn-gradient text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Generate QR Code
+        </button>
+
+        <!-- QR Code Display Area -->
+        <div id="qrcode-container" class="mt-8 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-2xl transition-all duration-300" style="display: none;">
+             <div id="qrcode" class="flex justify-center items-center"></div>
+             <button id="download-btn" class="mt-6 w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg" style="display: none;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download QR Code
+            </button>
+        </div>
+       
+        <div id="message-box" class="mt-4 p-3 text-center rounded-xl text-sm" style="display: none;"></div>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const urlInput = document.getElementById('url-input');
+        const qrcodeContainer = document.getElementById('qrcode-container');
+        const qrcodeDiv = document.getElementById('qrcode');
+        const messageBox = document.getElementById('message-box');
+        
+        const fgColorInput = document.getElementById('fg-color');
+        const bgColorInput = document.getElementById('bg-color');
+        const dotStyleSelect = document.getElementById('dot-style');
+        const logoUpload = document.getElementById('logo-upload');
+
+        let qrCodeInstance = null;
+
+        function showMessage(message, isError = false) {
+            messageBox.textContent = message;
+            messageBox.className = `mt-4 p-3 text-center rounded-xl text-sm ${isError ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`;
+            messageBox.style.display = 'block';
+        }
+
+        function generateQRCode() {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showMessage('Please enter a valid URL.', true);
+                qrcodeContainer.style.display = 'none';
+                return;
+            }
+            
+            const logoFile = logoUpload.files[0];
+            const reader = new FileReader();
+
+            const createStyledQRCode = (logoUrl) => {
+                qrcodeDiv.innerHTML = '';
+                try {
+                    qrCodeInstance = new QRCodeStyling({
+                        width: 256,
+                        height: 256,
+                        data: url,
+                        image: logoUrl || undefined,
+                        dotsOptions: {
+                            color: fgColorInput.value,
+                            type: dotStyleSelect.value
+                        },
+                        backgroundOptions: {
+                            color: bgColorInput.value,
+                        },
+                        imageOptions: {
+                            crossOrigin: "anonymous",
+                            margin: 8,
+                            imageSize: 0.4
+                        },
+                        qrOptions: {
+                            errorCorrectionLevel: 'H'
+                        }
+                    });
+                    qrCodeInstance.append(qrcodeDiv);
+                    qrcodeContainer.style.display = 'block';
+                    downloadBtn.style.display = 'block';
+                    showMessage('QR Code updated successfully!');
+                } catch (error) {
+                    console.error("QR Code generation failed:", error);
+                    showMessage('Failed to generate QR code. Please check settings.', true);
+                }
+            };
+
+            if (logoFile) {
+                reader.onload = () => createStyledQRCode(reader.result);
+                reader.readAsDataURL(logoFile);
+            } else {
+                createStyledQRCode(null);
+            }
+        }
+        
+        // Automatically generate for the default value on load
+        window.onload = () => {
+             generateQRCode();
+        };
+
+        generateBtn.addEventListener('click', generateQRCode);
+        
+        // Live update listeners
+        urlInput.addEventListener('input', generateQRCode);
+        fgColorInput.addEventListener('input', generateQRCode);
+        bgColorInput.addEventListener('input', generateQRCode);
+        dotStyleSelect.addEventListener('change', generateQRCode);
+        logoUpload.addEventListener('change', generateQRCode);
+
+        downloadBtn.addEventListener('click', () => {
+            if (qrCodeInstance) {
+                qrCodeInstance.download({ name: "lays-gg-qrcode", extension: "png" });
+            } else {
+                 showMessage('Could not find QR code to download.', true);
+            }
+        });
+    </script>
+</body>
+</html>
+
