@@ -47,6 +47,42 @@
                 linear-gradient(180deg, #fcfcfc 0%, #f7f7f7 65%, #f2f2f2 100%);
             color: var(--foreground);
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            inset: auto;
+            border-radius: 999px;
+            filter: blur(80px);
+            opacity: 0.55;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatSlow 14s ease-in-out infinite;
+        }
+
+        body::before {
+            width: 18rem;
+            height: 18rem;
+            left: -5rem;
+            top: 8rem;
+            background: rgba(220, 38, 38, 0.12);
+        }
+
+        body::after {
+            width: 22rem;
+            height: 22rem;
+            right: -7rem;
+            top: 14rem;
+            background: rgba(249, 115, 22, 0.12);
+            animation-delay: -5s;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(0, -18px, 0) scale(1.04); }
         }
 
         .font-display {
@@ -79,6 +115,12 @@
             position: sticky;
             top: 0.85rem;
             z-index: 50;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .site-nav.scrolled .glass {
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
         }
 
         .nav-link {
@@ -196,6 +238,38 @@
             border-color: rgba(220, 38, 38, 0.22);
             color: #dc2626;
         }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-1 { transition-delay: 0.08s; }
+        .stagger-2 { transition-delay: 0.16s; }
+        .stagger-3 { transition-delay: 0.24s; }
+
+        .hover-lift {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-3px);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
     <script type="application/ld+json">
     {
@@ -252,8 +326,9 @@
     </script>
 </head>
 <body>
+    <div aria-hidden="true"></div>
     <div class="shell">
-        <nav class="site-nav">
+        <nav class="site-nav" id="site-nav">
             <div class="glass rounded-2xl px-4 py-3 sm:px-6 sm:py-4">
                 <div class="flex items-center justify-between gap-4">
                     <a href="/" class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">Lanes</a>
@@ -271,15 +346,15 @@
             </div>
         </nav>
 
-        <main class="mt-6 rounded-[2rem] p-5 sm:p-8 glass">
-            <header class="mb-6 border-b border-neutral-200 pb-5">
+        <main class="mt-6 rounded-[2rem] p-5 sm:p-8 glass relative z-10">
+            <header class="mb-6 border-b border-neutral-200 pb-5 reveal is-visible">
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-red-600">Lanes Tools</p>
                 <h1 class="font-display mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">QR Code Generator</h1>
                 <p class="mt-2 text-sm text-neutral-600">Generate a QR code with logo, transparent PNG export, SVG export, and a sleek modern look.</p>
             </header>
 
             <section class="grid gap-6 lg:grid-cols-[1fr_1fr]">
-                <div>
+                <div class="reveal stagger-1 is-visible">
                     <div class="relative mb-4">
                         <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                         <input type="url" id="url-input" value="https://micro.lanes.gg/qr-code-generator" placeholder="https://your-link.com" class="field w-full rounded-2xl py-3 pl-12 pr-4 text-sm font-medium placeholder:text-neutral-500" aria-label="URL to encode">
@@ -318,11 +393,11 @@
                         </div>
                     </div>
 
-                    <button id="generate-btn" class="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-red-600 to-orange-500 px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(220,38,38,0.2)]">
+                    <button id="generate-btn" class="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-red-600 to-orange-500 px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(220,38,38,0.2)] hover-lift">
                         Generate QR code
                     </button>
 
-                    <div class="mt-5 rounded-2xl border border-neutral-200 bg-white p-4 elevate">
+                    <div class="mt-5 rounded-2xl border border-neutral-200 bg-white p-4 elevate hover-lift">
                         <p class="text-sm font-semibold text-neutral-900">Need this in production?</p>
                         <div class="mt-3 flex flex-wrap gap-2">
                             <a href="https://lanes.gg/connect" class="inline-flex items-center rounded-full bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white">Talk to Lanes</a>
@@ -331,14 +406,14 @@
                     </div>
                 </div>
 
-                <div>
-                    <div id="qrcode-container" class="checkerboard rounded-[1.5rem] border border-neutral-200 p-5 min-h-[370px] flex flex-col justify-between elevate" style="display: none;">
+                <div class="reveal stagger-2 is-visible">
+                    <div id="qrcode-container" class="checkerboard rounded-[1.5rem] border border-neutral-200 p-5 min-h-[370px] flex flex-col justify-between elevate hover-lift" style="display: none;">
                         <div id="qrcode" class="flex items-center justify-center flex-1"></div>
                         <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <button id="download-btn" class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-neutral-900 px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-800" style="display: none;">
+                            <button id="download-btn" class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-neutral-900 px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-800 hover-lift" style="display: none;">
                                 Download PNG
                             </button>
-                            <button id="download-svg-btn" class="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-neutral-900 bg-white px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-neutral-900 transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-100" style="display: none;">
+                            <button id="download-svg-btn" class="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-neutral-900 bg-white px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-neutral-900 transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-100 hover-lift" style="display: none;">
                                 Download SVG
                             </button>
                         </div>
@@ -348,7 +423,7 @@
                 </div>
             </section>
 
-            <section class="mt-8 grid gap-4 rounded-2xl border border-neutral-200 bg-white p-5">
+            <section class="mt-8 grid gap-4 rounded-2xl border border-neutral-200 bg-white p-5 reveal stagger-3 hover-lift">
                 <h2 class="font-display text-xl font-bold text-neutral-900">QR Code Generator FAQ</h2>
                 <details class="rounded-xl border border-neutral-200 px-4 py-3">
                     <summary class="cursor-pointer text-sm font-semibold text-neutral-900">Is this QR code generator free?</summary>
@@ -364,7 +439,7 @@
                 </details>
             </section>
 
-            <section class="footer-shell">
+            <section class="footer-shell reveal stagger-3">
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12 mb-12">
                     <div class="md:col-span-1">
                         <div class="mb-6">
@@ -559,6 +634,23 @@
                 showMessage('Could not find a QR code to download.', true);
             }
         });
+
+        const siteNav = document.getElementById('site-nav');
+        const revealItems = document.querySelectorAll('.reveal');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.18 });
+
+        revealItems.forEach((item) => observer.observe(item));
+
+        window.addEventListener('scroll', () => {
+            siteNav.classList.toggle('scrolled', window.scrollY > 10);
+        }, { passive: true });
     </script>
 </body>
 </html>
