@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator | Free QR Generator with Transparent PNG</title>
+    <meta name="description" content="Create a QR code with logo, transparent background, PNG download, and SVG export. Free QR code generator by Lanes.">
+    <meta name="keywords" content="qr code generator, qr generator, free qr code generator, transparent qr code, qr code maker, qr code with logo, svg qr code, png qr code">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="author" content="Lanes Group">
+    <meta name="theme-color" content="#fafafa">
+    <link rel="canonical" href="https://micro.lanes.gg/qr-code-generator">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lanes Group">
+    <meta property="og:title" content="QR Code Generator | Free QR Generator">
+    <meta property="og:description" content="Generate QR codes with transparent background support, logo upload, PNG download, and SVG export.">
+    <meta property="og:url" content="https://micro.lanes.gg/qr-code-generator">
+    <meta property="og:image" content="https://micro.lanes.gg/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="QR Code Generator | Free QR Generator">
+    <meta name="twitter:description" content="High-quality QR code generator with transparent background, PNG and SVG downloads, and logo support.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #fafafa;
+            --foreground: #171717;
+            --muted: #525252;
+            --border: #e5e5e5;
+            --panel: rgba(255, 255, 255, 0.9);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(220, 38, 38, 0.08), transparent 26%),
+                radial-gradient(circle at 88% 20%, rgba(249, 115, 22, 0.09), transparent 24%),
+                linear-gradient(180deg, #fcfcfc 0%, #f7f7f7 65%, #f2f2f2 100%);
+            color: var(--foreground);
+            min-height: 100vh;
+        }
+
+        .font-display {
+            font-family: 'Syne', sans-serif;
+        }
+
+        .shell {
+            width: min(1120px, calc(100% - 2rem));
+            margin: 1.25rem auto 2.5rem;
+        }
+
+        .glass {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 45px rgba(10, 10, 10, 0.08);
+            backdrop-filter: blur(12px);
+        }
+
+        .elevate {
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .elevate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.08);
+            border-color: #d4d4d4;
+        }
+
+        .site-nav {
+            position: sticky;
+            top: 0.85rem;
+            z-index: 50;
+        }
+
+        .nav-link {
+            color: #404040;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: #111111;
+        }
+
+        .field {
+            background: #ffffff;
+            border: 1px solid #d4d4d4;
+            color: #171717;
+        }
+
+        .field:focus {
+            outline: none;
+            border-color: rgba(220, 38, 38, 0.55);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+        }
+
+        .field[disabled] {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        input[type="file"]::file-selector-button {
+            margin-right: 1rem;
+            padding: 0.7rem 1rem;
+            border-radius: 0.8rem;
+            border: 0;
+            font-size: 0.875rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.12), rgba(249, 115, 22, 0.15));
+            color: #7f1d1d;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            transform: translateY(-1px);
+        }
+
+        #qrcode canvas,
+        #qrcode img {
+            margin: 0 auto;
+            border-radius: 1.25rem;
+            border: 8px solid #ffffff;
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.08);
+            width: min(100%, 360px);
+            height: auto;
+            image-rendering: auto;
+        }
+
+        body.transparent-mode #qrcode canvas,
+        body.transparent-mode #qrcode img {
+            border-width: 0;
+            border-color: transparent;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.06);
+        }
+
+        .checkerboard {
+            background-color: #f3f4f6;
+            background-image:
+                linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+                linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+                linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+            background-size: 18px 18px;
+            background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+        }
+
+        .hide-mobile {
+            display: none;
+        }
+
+        @media (min-width: 900px) {
+            .hide-mobile {
+                display: flex;
+            }
+        }
+
+        .footer-shell {
+            margin-top: 2rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-brand {
+            font-size: clamp(3rem, 10vw, 7rem);
+            line-height: 0.8;
+            letter-spacing: 0.18em;
+            color: rgba(23, 23, 23, 0.15);
+            transform: rotate(180deg);
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .social-link {
+            display: inline-flex;
+            width: 2.5rem;
+            height: 2.5rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #525252;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            border-color: rgba(220, 38, 38, 0.22);
+            color: #dc2626;
+        }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "QR Code Generator",
+      "url": "https://micro.lanes.gg/qr-code-generator",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web",
+      "description": "Generate high-quality QR codes with transparent background support, logo upload, PNG download, and SVG export.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Lanes Group",
+        "url": "https://lanes.gg"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is this QR code generator free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. This free QR code generator lets you create and download QR codes without cost."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I download a transparent QR code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Enable transparent background to download a QR code PNG without a border frame."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the QR generator support SVG export?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. You can download both PNG and SVG versions for web and print use."
+          }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <div class="shell">
+        <nav class="site-nav">
+            <div class="glass rounded-2xl px-4 py-3 sm:px-6 sm:py-4">
+                <div class="flex items-center justify-between gap-4">
+                    <a href="/" class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">Lanes</a>
+                    <div class="hide-mobile items-center gap-6 text-sm font-medium text-neutral-700">
+                        <a href="/" class="nav-link">Micro home</a>
+                        <a href="/" class="nav-link">Micro products</a>
+                        <a href="https://lanes.gg/#services" class="nav-link">Services</a>
+                        <a href="https://lanes.gg/blog" class="nav-link">Blog</a>
+                        <a href="https://lanes.gg/#faq" class="nav-link">FAQ</a>
+                        <a href="https://lanes.gg/team" class="nav-link">Team</a>
+                        <a href="https://lanes.gg/about" class="nav-link">About</a>
+                    </div>
+                    <a href="/" class="inline-flex items-center justify-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black/85">Other Micros</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="mt-6 rounded-[2rem] p-5 sm:p-8 glass">
+            <header class="mb-6 border-b border-neutral-200 pb-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-red-600">Lanes Tools</p>
+                <h1 class="font-display mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">QR Code Generator</h1>
+                <p class="mt-2 text-sm text-neutral-600">Generate a QR code with logo, transparent PNG export, SVG export, and a sleek modern look.</p>
+            </header>
+
+            <section class="grid gap-6 lg:grid-cols-[1fr_1fr]">
+                <div>
+                    <div class="relative mb-4">
+                        <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        <input type="url" id="url-input" value="https://micro.lanes.gg/qr-code-generator" placeholder="https://your-link.com" class="field w-full rounded-2xl py-3 pl-12 pr-4 text-sm font-medium placeholder:text-neutral-500" aria-label="URL to encode">
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 text-left sm:grid-cols-2">
+                        <div>
+                            <label for="fg-color" class="mb-2 block text-sm font-semibold text-neutral-700">Dot color</label>
+                            <input type="color" id="fg-color" value="#0f172a" class="field elevate h-11 w-full cursor-pointer rounded-2xl p-1">
+                        </div>
+                        <div>
+                            <label for="bg-color" class="mb-2 block text-sm font-semibold text-neutral-700">Background color</label>
+                            <input type="color" id="bg-color" value="#f8fafc" class="field elevate h-11 w-full cursor-pointer rounded-2xl p-1">
+                        </div>
+
+                        <label class="sm:col-span-2 elevate flex items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-800">
+                            <input type="checkbox" id="bg-transparent" class="h-4 w-4 accent-red-600">
+                            Transparent background
+                        </label>
+
+                        <div class="sm:col-span-2">
+                            <label for="dot-style" class="mb-2 block text-sm font-semibold text-neutral-700">Style</label>
+                            <select id="dot-style" class="field elevate w-full rounded-2xl px-4 py-3 text-sm font-medium">
+                                <option value="square">Square</option>
+                                <option value="dots">Dots</option>
+                                <option value="rounded" selected>Rounded</option>
+                                <option value="extra-rounded">Extra rounded</option>
+                                <option value="classy">Classy</option>
+                                <option value="classy-rounded">Classy rounded</option>
+                            </select>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label for="logo-upload" class="mb-2 block text-sm font-semibold text-neutral-700">Logo (optional)</label>
+                            <input type="file" id="logo-upload" accept="image/png, image/jpeg, image/svg+xml" class="field elevate w-full rounded-2xl px-4 py-3 text-sm text-neutral-700">
+                        </div>
+                    </div>
+
+                    <button id="generate-btn" class="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-red-600 to-orange-500 px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(220,38,38,0.2)]">
+                        Generate QR code
+                    </button>
+
+                    <div class="mt-5 rounded-2xl border border-neutral-200 bg-white p-4 elevate">
+                        <p class="text-sm font-semibold text-neutral-900">Need this in production?</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <a href="https://lanes.gg/connect" class="inline-flex items-center rounded-full bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white">Talk to Lanes</a>
+                            <a href="https://lanes.gg/portfolio" class="inline-flex items-center rounded-full border border-neutral-300 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-neutral-800">See Work</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div id="qrcode-container" class="checkerboard rounded-[1.5rem] border border-neutral-200 p-5 min-h-[370px] flex flex-col justify-between elevate" style="display: none;">
+                        <div id="qrcode" class="flex items-center justify-center flex-1"></div>
+                        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <button id="download-btn" class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-neutral-900 px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-800" style="display: none;">
+                                Download PNG
+                            </button>
+                            <button id="download-svg-btn" class="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-neutral-900 bg-white px-5 py-4 text-sm font-black uppercase tracking-[0.16em] text-neutral-900 transition duration-300 hover:-translate-y-0.5 hover:bg-neutral-100" style="display: none;">
+                                Download SVG
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="message-box" class="mt-4 hidden rounded-2xl border px-4 py-3 text-sm font-medium"></div>
+                </div>
+            </section>
+
+            <section class="mt-8 grid gap-4 rounded-2xl border border-neutral-200 bg-white p-5">
+                <h2 class="font-display text-xl font-bold text-neutral-900">QR Code Generator FAQ</h2>
+                <details class="rounded-xl border border-neutral-200 px-4 py-3">
+                    <summary class="cursor-pointer text-sm font-semibold text-neutral-900">Is this QR code generator free?</summary>
+                    <p class="mt-2 text-sm text-neutral-600">Yes. This QR generator is free and built for quick, high-quality QR creation.</p>
+                </details>
+                <details class="rounded-xl border border-neutral-200 px-4 py-3">
+                    <summary class="cursor-pointer text-sm font-semibold text-neutral-900">Can I make a transparent QR code?</summary>
+                    <p class="mt-2 text-sm text-neutral-600">Yes. Enable Transparent background to export a clean PNG without the border frame.</p>
+                </details>
+                <details class="rounded-xl border border-neutral-200 px-4 py-3">
+                    <summary class="cursor-pointer text-sm font-semibold text-neutral-900">Can I add my logo to the QR code?</summary>
+                    <p class="mt-2 text-sm text-neutral-600">Yes. Upload your logo and download the QR code with center branding.</p>
+                </details>
+            </section>
+
+            <section class="footer-shell">
+                <div class="grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12 mb-12">
+                    <div class="md:col-span-1">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-neutral-900 mb-3 flex items-center gap-2">
+                                <span class="text-red-600">✦</span>
+                                THE LANES GROUP
+                            </h3>
+                            <p class="text-neutral-600 leading-relaxed text-sm">Micro products and utility pages built to rank, convert, and stay on brand.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <a class="social-link" href="https://www.linkedin.com/company/108593261/" target="_blank" rel="noopener noreferrer">in</a>
+                            <a class="social-link" href="https://twitter.com/lanes.gg" target="_blank" rel="noopener noreferrer">x</a>
+                            <a class="social-link" href="https://github.com/lanes.gg" target="_blank" rel="noopener noreferrer">gh</a>
+                            <a class="social-link" href="https://instagram.com/lanes.gg" target="_blank" rel="noopener noreferrer">ig</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-neutral-900 mb-4">Explore</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li><a class="nav-link" href="/">Micro home</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/#services">What We Do</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/blog">Blog</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/portfolio">Portfolio</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/team">Meet the Team</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-neutral-900 mb-4">Company</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li><a class="nav-link" href="https://lanes.gg/about">About Us</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/connect">Connect</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/#contact">Contact</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/privacy-policy">Privacy Policy</a></li>
+                            <li><a class="nav-link" href="https://lanes.gg/terms-of-service">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-neutral-200 pt-8">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="text-center md:text-left">
+                            <p class="text-sm text-neutral-500 font-medium mb-3">THE LANES GROUP Private Limited (CIN: U62020PN2026PTC253076)</p>
+                            <p class="text-xs text-neutral-500 font-medium">© 2026 THE LANES GROUP. Crafted with love by THE LANES GROUP</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2 text-xs text-neutral-500">
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span class="font-medium">All systems operational</span>
+                            </div>
+                            <a href="#top" class="text-xs text-neutral-500 hover:text-neutral-900 transition-colors font-medium">Back to top</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-[20px] w-full px-[3px] overflow-hidden pb-0">
+                    <div class="w-full text-center select-none leading-none">
+                        <span class="block rotate-180 text-[10vw] font-bold tracking-widest text-neutral-900/15 leading-[0.75] w-full whitespace-nowrap">THE LANES GROUP</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const downloadSvgBtn = document.getElementById('download-svg-btn');
+        const urlInput = document.getElementById('url-input');
+        const qrcodeContainer = document.getElementById('qrcode-container');
+        const qrcodeDiv = document.getElementById('qrcode');
+        const messageBox = document.getElementById('message-box');
+
+        const fgColorInput = document.getElementById('fg-color');
+        const bgColorInput = document.getElementById('bg-color');
+        const bgTransparentInput = document.getElementById('bg-transparent');
+        const dotStyleSelect = document.getElementById('dot-style');
+        const logoUpload = document.getElementById('logo-upload');
+
+        const EXPORT_SIZE = 1400;
+        let qrCodeInstance = null;
+
+        function showMessage(message, isError = false) {
+            messageBox.textContent = message;
+            messageBox.className = `mt-4 rounded-2xl border px-4 py-3 text-sm font-medium ${isError ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`;
+            messageBox.style.display = 'block';
+        }
+
+        function getBackgroundColor() {
+            return bgTransparentInput.checked ? 'rgba(0,0,0,0)' : bgColorInput.value;
+        }
+
+        function syncBackgroundFieldState() {
+            bgColorInput.disabled = bgTransparentInput.checked;
+            document.body.classList.toggle('transparent-mode', bgTransparentInput.checked);
+        }
+
+        function generateQRCode() {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showMessage('Please enter a valid URL.', true);
+                qrcodeContainer.style.display = 'none';
+                return;
+            }
+
+            const logoFile = logoUpload.files[0];
+            const reader = new FileReader();
+
+            const createStyledQRCode = (logoUrl) => {
+                qrcodeDiv.innerHTML = '';
+
+                try {
+                    qrCodeInstance = new QRCodeStyling({
+                        width: EXPORT_SIZE,
+                        height: EXPORT_SIZE,
+                        data: url,
+                        image: logoUrl || undefined,
+                        dotsOptions: {
+                            color: fgColorInput.value,
+                            type: dotStyleSelect.value,
+                        },
+                        cornersSquareOptions: {
+                            color: fgColorInput.value,
+                            type: 'extra-rounded',
+                        },
+                        cornersDotOptions: {
+                            color: fgColorInput.value,
+                            type: 'dot',
+                        },
+                        backgroundOptions: {
+                            color: getBackgroundColor(),
+                        },
+                        imageOptions: {
+                            crossOrigin: 'anonymous',
+                            margin: 8,
+                            imageSize: 0.38,
+                            hideBackgroundDots: true,
+                        },
+                        qrOptions: {
+                            errorCorrectionLevel: 'H',
+                        },
+                    });
+
+                    qrCodeInstance.append(qrcodeDiv);
+                    qrcodeContainer.style.display = 'block';
+                    downloadBtn.style.display = 'inline-flex';
+                    downloadSvgBtn.style.display = 'inline-flex';
+                    showMessage('QR code updated.');
+                } catch (error) {
+                    console.error('QR code generation failed:', error);
+                    showMessage('Failed to generate the QR code. Please check the current settings.', true);
+                }
+            };
+
+            if (logoFile) {
+                reader.onload = () => createStyledQRCode(reader.result);
+                reader.readAsDataURL(logoFile);
+            } else {
+                createStyledQRCode(null);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            generateQRCode();
+        });
+
+        generateBtn.addEventListener('click', generateQRCode);
+        urlInput.addEventListener('input', generateQRCode);
+        fgColorInput.addEventListener('input', generateQRCode);
+        bgColorInput.addEventListener('input', generateQRCode);
+        bgTransparentInput.addEventListener('change', () => {
+            syncBackgroundFieldState();
+            generateQRCode();
+        });
+        dotStyleSelect.addEventListener('change', generateQRCode);
+        logoUpload.addEventListener('change', generateQRCode);
+
+        syncBackgroundFieldState();
+
+        downloadBtn.addEventListener('click', () => {
+            if (qrCodeInstance) {
+                qrCodeInstance.download({ name: 'lanes-qr-code', extension: 'png' });
+            } else {
+                showMessage('Could not find a QR code to download.', true);
+            }
+        });
+
+        downloadSvgBtn.addEventListener('click', () => {
+            if (qrCodeInstance) {
+                qrCodeInstance.download({ name: 'lanes-qr-code', extension: 'svg' });
+            } else {
+                showMessage('Could not find a QR code to download.', true);
+            }
+        });
+    </script>
+</body>
+</html>

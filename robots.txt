@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://micro.lanes.gg/sitemap.xml
